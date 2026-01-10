@@ -1,9 +1,13 @@
-name: Deploy to S3
+name: Deploy to S3 using OIDC
 
 on:
   push:
     branches:
       - main
+
+permissions:
+  id-token: write   # REQUIRED for OIDC
+  contents: read
 
 jobs:
   deploy:
@@ -13,13 +17,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_1 }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_1 }}
+          role-to-assume: arn:aws:iam::643782314322:role/GitHub-OIDC-S3-Deploy-Role
           aws-region: eu-central-1
 
       - name: Deploy to S3
         run: |
-         aws s3 sync . s3://kanishq-day7-static-site-2026 --delete
+          aws s3 sync . s3://kanishq-day-7-static-site-2026 \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*"
