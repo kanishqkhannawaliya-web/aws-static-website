@@ -25,7 +25,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync . s3://kanishq-day7-static-site-2026 \
+          aws s3 sync . s3://kanishq-day-7-static-site-2026 \
             --delete \
             --exclude ".git/*" \
             --exclude ".github/*"
